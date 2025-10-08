@@ -83,22 +83,16 @@ const AppHeader: React.FC = () => {
             {/* Cross Icon */}
           </button>
 
+          
           <Link href="/" className="lg:hidden">
-            <Image
-              width={154}
-              height={32}
-              className="dark:hidden"
-              src="./images/logo/logo.svg"
-              alt="Logo"
-            />
-            <Image
-              width={154}
-              height={32}
-              className="hidden dark:block"
-              src="./images/logo/logo-dark.svg"
-              alt="Logo"
-            />
-          </Link>
+            <div className="flex items-center gap-2">
+              <Image src={"/images/sparrow-logo.png"} alt="Logo" width={35} height={35} />
+               <div>
+                <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Platform</h1>
+                <h4 className="text-xs font-medium text-gray-600 dark:text-gray-300">Enterprise Transaction Manager</h4>
+              </div>
+            </div>
+        </Link>
 
           <button
             onClick={toggleApplicationMenu}
