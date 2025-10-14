@@ -8,9 +8,8 @@ import {
   ChevronDownIcon,
   HorizontaLDots
 } from "../icons/index";
-import SidebarWidget from "./SidebarWidget";
 
-import { Boxes, FileBox, FileCode, Handshake, MonitorCog, LayoutDashboard, ListIcon } from "lucide-react";
+import { Boxes, FileBox, FileCode, Handshake, MonitorCog, LayoutDashboard } from "lucide-react";
 type NavItem = {
   name: string;
   icon: React.ReactNode;
@@ -27,12 +26,12 @@ const navItems: NavItem[] = [
   {
     icon: <Boxes />,
     name: "Configuration",
-    path: "/calendar",
+    path: "/configuration",
   },
   {
     icon: <MonitorCog />,
     name: "Monitoring",
-    path: "/profile",
+    path: "/monitoring",
   },
   {
     icon: <FileBox />,
@@ -47,23 +46,9 @@ const navItems: NavItem[] = [
   {
     icon: <FileCode />,
     name: "Reports",
-    subItems: [{ name: "Schedule Reports", path: "/form-elements", pro: false },
-    { name: "Detail Reports", path: "/form-elements", pro: false }]
+    subItems: [{ name: "Schedule Reports", path: "/schedule-reports", pro: false },
+    { name: "Generate Reports", path: "/generate-reports", pro: false }]
   },
-
-  // {
-  //   name: "Tables",
-  //   icon: <TableIcon />,
-  //   subItems: [{ name: "Basic Tables", path: "/basic-tables", pro: false }],
-  // },
-  // {
-  //   name: "Pages",
-  //   icon: <PageIcon />,
-  //   subItems: [
-  //     { name: "Blank Page", path: "/blank", pro: false },
-  //     { name: "404 Error", path: "/error-404", pro: false },
-  //   ],
-  // },
 ];
 
 const othersItems: NavItem[] = [
@@ -306,7 +291,7 @@ const AppSidebar: React.FC = () => {
               <Image src={"/images/sparrow-logo.png"} alt="Logo" width={35} height={35} />
               <div>
                 <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Platform</h1>
-                <h4 className="text-xs font-medium text-gray-600 dark:text-gray-300">Enterprise Transaction Manager</h4>
+                {/* <h4 className="text-xs font-medium text-gray-600 dark:text-gray-300">Enterprise Transaction Manager</h4> */}
               </div>
             </div>
           ) : (
