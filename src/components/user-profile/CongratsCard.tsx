@@ -22,7 +22,7 @@ const CongratsCard: React.FC<CongratsCardProps> = ({
     buttonText = "View Badges",
     imageSrc = "/images/user/man-with-laptop.png",
     imageAlt = "View Badge User",
-    redirectUrl = "/badges",
+    redirectUrl = "/notifications",
     className = "",
 }) => {
     const handleClick = () => {
