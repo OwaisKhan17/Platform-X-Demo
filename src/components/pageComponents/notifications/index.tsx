@@ -5,7 +5,7 @@ import DynamicTable from "@/components/tables/Table";
 import GlobalModal from "@/components/reusable/modals/Modal";
 import Button from "@/components/ui/button/Button";
 import { useModal } from "@/hooks/useModal";
-import { AlertTriangle, CheckCircle2, Info, OctagonAlert, Trash2 } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Eye, Info, OctagonAlert, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import AlertModal from "@/components/reusable/modals/AlertModal";
 
@@ -172,30 +172,27 @@ export default function NotificationTableClient() {
             key: "actions",
             label: "Actions",
             render: (item: any) => (
-                <div className="flex items-center gap-3">
-                    {/* View Details Button */}
+                <div className="flex items-center gap-2">
+                    {/* View Button (Eye Icon) */}
                     <Button
                         variant="outline"
-                        size="sm"
                         onClick={() => handleViewDetails(item)}
-                        className="border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-white/[0.05] rounded-full px-4 py-1.5 text-xs font-medium transition-all shadow-sm hover:shadow-md"
+                        className="border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-blue-500/10 hover:text-blue-600 dark:hover:text-blue-400 rounded-xl transition-all shadow-sm hover:shadow-md"
                     >
-                        <span className="flex items-center gap-1.5">
-                            <Info className="w-4 h-4 text-blue-500" />
-                            View Details
-                        </span>
+                        <Eye size={16} className="text-blue-500" />
                     </Button>
 
                     {/* Delete Button */}
                     <Button
                         onClick={() => handleDeleteClick(item)}
-                        className="bg-red-500 hover:bg-red-600 text-white rounded-full p-2 transition-all shadow-sm hover:shadow-md"
+                        className="bg-red-500 hover:bg-red-600 text-white rounded-xl transition-all shadow-sm hover:shadow-md"
                     >
                         <Trash2 size={16} />
                     </Button>
                 </div>
             ),
-        },
+        }
+
 
     ];
 
@@ -303,8 +300,9 @@ export default function NotificationTableClient() {
                 isOpen={deleteSuccessModal.isOpen}
                 onClose={deleteSuccessModal.closeModal}
                 type="success"
-                title="Well Done!"
-                description="Your action was successful."
+                title="Notification Deleted"
+                description=""
+                buttonText="Okay"
             />
 
         </>
