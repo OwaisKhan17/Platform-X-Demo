@@ -14,6 +14,11 @@ interface Column<T> {
   className?: string;
 }
 
+interface RowSelection<T> {
+  selectedRowKeys: (string | number)[];
+  onChange: (selectedKeys: (string | number)[]) => void;
+}
+
 interface DynamicTableProps<T> {
   columns: Column<T>[];
   data: T[];
@@ -21,6 +26,7 @@ interface DynamicTableProps<T> {
   emptyMessage?: string;
   headerClassName?: string;
   bodyClassName?: string;
+  rowSelection?: RowSelection<T>;
 }
 
 export default function DynamicTable<T>({
@@ -30,6 +36,7 @@ export default function DynamicTable<T>({
   emptyMessage = "No data available",
   headerClassName,
   bodyClassName,
+  rowSelection
 }: DynamicTableProps<T>) {
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
@@ -40,6 +47,34 @@ export default function DynamicTable<T>({
             className={`border-b border-gray-100 dark:border-white/[0.05] ${headerClassName || ""}`}
           >
             <TableRow>
+              {/* ✅ Add Select-All checkbox if rowSelection exists */}
+              {rowSelection && (
+                <TableCell
+                  isHeader
+                  className="px-5 py-3 text-start w-[40px]"
+                >
+                  <input
+                    type="checkbox"
+                    checked={
+                      data.length > 0 &&
+                      rowSelection.selectedRowKeys.length === data.length
+                    }
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        rowSelection.onChange(
+                          data.map((item, index) =>
+                            rowKey ? rowKey(item, index) : index
+                          )
+                        );
+                      } else {
+                        rowSelection.onChange([]);
+                      }
+                    }}
+                    className="accent-blue-600 cursor-pointer"
+                  />
+                </TableCell>
+              )}
+
               {columns.map((col) => (
                 <TableCell
                   key={col.key.toString()}
@@ -59,25 +94,56 @@ export default function DynamicTable<T>({
             {data.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={columns.length}
+                  colSpan={columns.length + (rowSelection ? 1 : 0)}
                   className="px-5 py-4 text-center text-gray-500 dark:text-gray-400"
                 >
                   {emptyMessage}
                 </TableCell>
               </TableRow>
             ) : (
-              data.map((item, index) => (
-                <TableRow key={rowKey ? rowKey(item, index) : index}>
-                  {columns.map((col) => (
-                    <TableCell
-                      key={col.key.toString()}
-                      className={`px-5 py-4 text-start text-gray-700 dark:text-gray-300 ${col.className || ""}`}
-                    >
-                      {col.render ? col.render(item) : (item as any)[col.key]}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
+              data.map((item, index) => {
+                const key = rowKey ? rowKey(item, index) : index;
+                const isSelected = rowSelection?.selectedRowKeys.includes(key);
+
+                return (
+                  <TableRow
+                    key={key}
+                    className={isSelected ? "bg-blue-50 dark:bg-blue-900/30" : ""}
+                  >
+                    {/* ✅ Add checkbox cell */}
+                    {rowSelection && (
+                      <TableCell className="px-5 py-4 text-start w-[40px]">
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              rowSelection.onChange([
+                                ...rowSelection.selectedRowKeys,
+                                key,
+                              ]);
+                            } else {
+                              rowSelection.onChange(
+                                rowSelection.selectedRowKeys.filter((k) => k !== key)
+                              );
+                            }
+                          }}
+                          className="accent-blue-600 cursor-pointer"
+                        />
+                      </TableCell>
+                    )}
+
+                    {columns.map((col) => (
+                      <TableCell
+                        key={col.key.toString()}
+                        className={`px-5 py-4 text-start text-gray-700 dark:text-gray-300 ${col.className || ""}`}
+                      >
+                        {col.render ? col.render(item) : (item as any)[col.key]}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                );
+              })
             )}
           </TableBody>
         </Table>

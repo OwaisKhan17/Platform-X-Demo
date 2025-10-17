@@ -5,10 +5,11 @@ import DynamicTable from "@/components/tables/Table";
 import GlobalModal from "@/components/reusable/modals/Modal";
 import Button from "@/components/ui/button/Button";
 import { useModal } from "@/hooks/useModal";
-import { AlertCircle, AlertTriangle, CheckCircle2, Info, OctagonAlert } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Info, OctagonAlert, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import AlertModal from "@/components/reusable/modals/AlertModal";
 
-const tableData = [
+const initialTableData = [
     {
         id: 1,
         type: "Critical",
@@ -56,22 +57,22 @@ const typeConfig: Record<
     { icon: React.ElementType; color: string; bg: string }
 > = {
     Critical: {
-        icon: OctagonAlert, // 🟥 clearly distinct icon for critical
+        icon: OctagonAlert,
         color: "text-red-600 dark:text-red-400",
         bg: "bg-red-50 dark:bg-red-500/10",
     },
     Warning: {
-        icon: AlertTriangle, // 🟠 triangular warning
+        icon: AlertTriangle,
         color: "text-amber-600 dark:text-amber-400",
         bg: "bg-amber-50 dark:bg-amber-500/10",
     },
     Info: {
-        icon: Info, // 🔵 info bubble
+        icon: Info,
         color: "text-sky-600 dark:text-sky-400",
         bg: "bg-sky-50 dark:bg-sky-500/10",
     },
     Success: {
-        icon: CheckCircle2, // 🟢 success check
+        icon: CheckCircle2,
         color: "text-emerald-600 dark:text-emerald-400",
         bg: "bg-emerald-50 dark:bg-emerald-500/10",
     },
@@ -84,12 +85,33 @@ const statusColorMap: Record<string, string> = {
 };
 
 export default function NotificationTableClient() {
+    const [tableData, setTableData] = useState(initialTableData);
+    const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>(
+        []
+    );
+
+    const detailsModal = useModal();
+    const deleteModal = useModal();
+    const deleteSuccessModal = useModal();
+
     const [selectedRow, setSelectedRow] = useState<any>(null);
-    const { isOpen, openModal, closeModal } = useModal();
+
+    const [rowToDelete, setRowToDelete] = useState<any>(null);
 
     const handleViewDetails = (row: any) => {
         setSelectedRow(row);
-        openModal();
+        detailsModal.openModal();
+    };
+
+    const handleDeleteClick = (row: any) => {
+        setRowToDelete(row);
+        deleteModal.openModal();
+    };
+
+    const confirmDelete = () => {
+        setTableData((prev) => prev.filter((item) => item.id !== rowToDelete.id));
+        deleteModal.closeModal();
+        deleteSuccessModal.openModal();
     };
 
     const columns = [
@@ -99,14 +121,8 @@ export default function NotificationTableClient() {
             render: (item: any) => {
                 const config = typeConfig[item.type] || typeConfig.Info;
                 const Icon = config.icon;
-
                 return (
-                    <div
-                        className={cn(
-                            "flex items-center gap-2 font-medium",
-                            config.color
-                        )}
-                    >
+                    <div className={cn("flex items-center gap-2 font-medium", config.color)}>
                         <span
                             className={cn(
                                 "p-2 rounded-lg inline-flex items-center justify-center",
@@ -145,8 +161,7 @@ export default function NotificationTableClient() {
                 <span
                     className={cn(
                         "inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium",
-                        statusColorMap[item.status] ||
-                        "bg-gray-100 text-gray-700"
+                        statusColorMap[item.status] || "bg-gray-100 text-gray-700"
                     )}
                 >
                     {item.status}
@@ -157,29 +172,47 @@ export default function NotificationTableClient() {
             key: "actions",
             label: "Actions",
             render: (item: any) => (
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleViewDetails(item)}
-                    className="text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-white/[0.05] rounded-xl transition-all text-xs"
-                >
-                    {item.actions}
-                </Button>
+                <div className="flex items-center gap-3">
+                    {/* View Details Button */}
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleViewDetails(item)}
+                        className="border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-white/[0.05] rounded-full px-4 py-1.5 text-xs font-medium transition-all shadow-sm hover:shadow-md"
+                    >
+                        <span className="flex items-center gap-1.5">
+                            <Info className="w-4 h-4 text-blue-500" />
+                            View Details
+                        </span>
+                    </Button>
+
+                    {/* Delete Button */}
+                    <Button
+                        onClick={() => handleDeleteClick(item)}
+                        className="bg-red-500 hover:bg-red-600 text-white rounded-full p-2 transition-all shadow-sm hover:shadow-md"
+                    >
+                        <Trash2 size={16} />
+                    </Button>
+                </div>
             ),
         },
+
     ];
 
     return (
         <>
             <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] lg:p-6">
                 <div className="space-y-6">
-                    <DynamicTable columns={columns} data={tableData} rowKey={(r) => r.id} />
+                    <DynamicTable columns={columns} data={tableData} rowKey={(r) => r.id} rowSelection={{
+                        selectedRowKeys,
+                        onChange: setSelectedRowKeys,
+                    }} />
                 </div>
             </div>
 
             <GlobalModal
-                isOpen={isOpen}
-                onClose={closeModal}
+                isOpen={detailsModal.isOpen}
+                onClose={detailsModal.closeModal}
                 title="Notification Details"
                 confirmLabel="Close"
                 showFooter={false}
@@ -191,7 +224,8 @@ export default function NotificationTableClient() {
                             <span
                                 className={cn(
                                     "p-2 rounded-lg inline-flex items-center justify-center",
-                                    selectedRow.type === "Critical" && "animate-pulse", // 👈 only adds if Critical
+                                    selectedRow.type === "Critical" && "animate-ping",
+                                    selectedRow.type === "Success" && "animate-bounce",
                                     typeConfig[selectedRow.type]?.bg || typeConfig.Info.bg
                                 )}
                             >
@@ -249,6 +283,30 @@ export default function NotificationTableClient() {
                 )}
 
             </GlobalModal>
+
+            <GlobalModal
+                isOpen={deleteModal.isOpen}
+                onClose={deleteModal.closeModal}
+                title="Confirm Deletion"
+                confirmLabel="Delete"
+                cancelLabel="Cancel"
+                onConfirm={confirmDelete}
+            >
+                <p className="text-sm text-gray-600 dark:text-gray-300">
+                    Are you sure you want to delete{" "}
+                    <span className="font-medium">{rowToDelete?.type}</span> notification?
+                    This action cannot be undone.
+                </p>
+            </GlobalModal>
+
+            <AlertModal
+                isOpen={deleteSuccessModal.isOpen}
+                onClose={deleteSuccessModal.closeModal}
+                type="success"
+                title="Well Done!"
+                description="Your action was successful."
+            />
+
         </>
     );
 }
