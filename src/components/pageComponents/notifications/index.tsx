@@ -94,6 +94,7 @@ export default function NotificationTableClient() {
     const deleteModal = useModal();
     const deleteSuccessModal = useModal();
     const deleteFailModal = useModal();
+    const bulkDeleteModal = useModal();
 
     const [selectedRow, setSelectedRow] = useState<any>(null);
 
@@ -116,6 +117,31 @@ export default function NotificationTableClient() {
             deleteFailModal.openModal();
         } else {
             setTableData((prev) => prev.filter((item) => item.id !== rowToDelete.id));
+            deleteSuccessModal.openModal();
+        }
+    };
+
+    const handleBulkDeleteClick = () => {
+        bulkDeleteModal.openModal();
+    };
+
+    const confirmBulkDelete = () => {
+        bulkDeleteModal.closeModal();
+        const selectedRows = tableData.filter((item) =>
+            selectedRowKeys.includes(item.id)
+        );
+
+        const hasCritical = selectedRows.some(
+            (item) => item.type === "Critical" || item.type === "Error"
+        );
+
+        if (hasCritical) {
+            deleteFailModal.openModal();
+        } else {
+            setTableData((prev) =>
+                prev.filter((item) => !selectedRowKeys.includes(item.id))
+            );
+            setSelectedRowKeys([]);
             deleteSuccessModal.openModal();
         }
     };
@@ -302,6 +328,21 @@ export default function NotificationTableClient() {
                 </p>
             </GlobalModal>
 
+            <GlobalModal
+                isOpen={bulkDeleteModal.isOpen}
+                onClose={bulkDeleteModal.closeModal}
+                title="Confirm Bulk Deletion"
+                confirmLabel="Delete Selected"
+                cancelLabel="Cancel"
+                onConfirm={confirmBulkDelete}
+            >
+                <p className="text-sm text-gray-600 dark:text-gray-300">
+                    Are you sure you want to delete{" "}
+                    <span className="font-medium">{selectedRowKeys.length}</span> selected
+                    notifications? This action cannot be undone.
+                </p>
+            </GlobalModal>
+
             <AlertModal
                 isOpen={deleteSuccessModal.isOpen}
                 onClose={deleteSuccessModal.closeModal}
@@ -315,10 +356,12 @@ export default function NotificationTableClient() {
                 isOpen={deleteFailModal.isOpen}
                 onClose={deleteFailModal.closeModal}
                 type="error"
-                title="Error"
+                title="Critical Notification Can't Be Deleted"
                 description=""
                 buttonText="Okay"
             />
+
+
 
         </>
     );
