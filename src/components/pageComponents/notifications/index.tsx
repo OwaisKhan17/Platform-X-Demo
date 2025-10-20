@@ -300,7 +300,7 @@ export default function NotificationTableClient() {
                 isOpen={deleteSuccessModal.isOpen}
                 onClose={deleteSuccessModal.closeModal}
                 type="success"
-                title="Notification Deleted"
+                title="Notification Deleted Successfully"
                 description=""
                 buttonText="Okay"
             />
