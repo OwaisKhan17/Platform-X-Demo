@@ -2,8 +2,8 @@
 import Checkbox from "@/components/form/input/Checkbox";
 import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
-import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "@/icons";
 import Link from "next/link";
+import { ChevronLeft, Eye, EyeClosed } from "lucide-react";
 import React, { useState } from "react";
 
 export default function SignUpForm() {
@@ -16,7 +16,7 @@ export default function SignUpForm() {
           href="/"
           className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
         >
-          <ChevronLeftIcon />
+          <ChevronLeft />
           Back to dashboard
         </Link>
       </div>
@@ -138,9 +138,9 @@ export default function SignUpForm() {
                       className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
                     >
                       {showPassword ? (
-                        <EyeIcon className="fill-gray-500 dark:fill-gray-400" />
+                        <Eye className="dark:text-gray-400" />
                       ) : (
-                        <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400" />
+                        <EyeClosed className="dark:text-gray-400" />
                       )}
                     </span>
                   </div>
@@ -163,7 +163,6 @@ export default function SignUpForm() {
                     </span>
                   </p>
                 </div>
-                {/* <!-- Button --> */}
                 <div>
                   <button className="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600">
                     Sign Up

@@ -93,6 +93,7 @@ export default function NotificationTableClient() {
     const detailsModal = useModal();
     const deleteModal = useModal();
     const deleteSuccessModal = useModal();
+    const deleteFailModal = useModal();
 
     const [selectedRow, setSelectedRow] = useState<any>(null);
 
@@ -109,9 +110,14 @@ export default function NotificationTableClient() {
     };
 
     const confirmDelete = () => {
-        setTableData((prev) => prev.filter((item) => item.id !== rowToDelete.id));
         deleteModal.closeModal();
-        deleteSuccessModal.openModal();
+
+        if (rowToDelete?.type === "Critical" || rowToDelete?.type === "Error") {
+            deleteFailModal.openModal();
+        } else {
+            setTableData((prev) => prev.filter((item) => item.id !== rowToDelete.id));
+            deleteSuccessModal.openModal();
+        }
     };
 
     const columns = [
@@ -300,7 +306,16 @@ export default function NotificationTableClient() {
                 isOpen={deleteSuccessModal.isOpen}
                 onClose={deleteSuccessModal.closeModal}
                 type="success"
-                title="Notification Deleted Successfully"
+                title="Notification Deleted"
+                description=""
+                buttonText="Okay"
+            />
+
+            <AlertModal
+                isOpen={deleteFailModal.isOpen}
+                onClose={deleteFailModal.closeModal}
+                type="error"
+                title="Error"
                 description=""
                 buttonText="Okay"
             />

@@ -1,17 +1,29 @@
-import { ReportUserMetrics } from "@/components/ecommerce/ReportUserMetrics";
+import { ReportUserMetrics } from "@/components/reports/ReportUserMetrics";
 import React from "react";
-import MonthlyTarget from "@/components/ecommerce/MonthlyTarget";
-import RecentOrders from "@/components/ecommerce/RecentOrders";
 import CongratsCard from "@/components/user-profile/CongratsCard";
-import MonthlyReportsChart from "@/components/ecommerce/MonthlyReportsChart";
+import MonthlyReportsChart from "@/components/reports/MonthlyReportsChart";
+import ReportsList from "@/components/reports/ReportList";
+import MonthlySuccessfulReports from "@/components/reports/MonthlySuccessfulReports";
 
-export default function Ecommerce() {
+export default function Dashboard() {
+
+  const currentHour = new Date().getHours();
+
+  // Determine greeting based on time
+  const getGreeting = () => {
+    if (currentHour < 12) return "Good morning";
+    if (currentHour < 18) return "Good afternoon";
+    return "Good evening";
+  };
+
+  const greeting = `${getGreeting()}, Owais! 👋`;
+
   return (
     <div className="grid grid-cols-12 gap-4 md:gap-6">
 
       <div className="col-span-12 space-y-6 xl:col-span-7">
         <CongratsCard
-          title="Good afternoon, John! 👋"
+          title={greeting}
           message="You’ve received"
           percentage="8"
           highlightText="requests"
@@ -30,11 +42,11 @@ export default function Ecommerce() {
       </div>
 
       <div className="col-span-12 xl:col-span-5">
-        <MonthlyTarget />
+        <MonthlySuccessfulReports />
       </div>
 
       <div className="col-span-12">
-        <RecentOrders />
+        <ReportsList />
       </div>
 
     </div>
