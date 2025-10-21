@@ -231,11 +231,28 @@ export default function NotificationTableClient() {
     return (
         <>
             <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] lg:p-6">
+                <div className="flex justify-end mb-4">
+                    {selectedRowKeys.length > 0 && (
+                        <Button
+                            onClick={handleBulkDeleteClick}
+                            className="bg-red-500 hover:bg-red-600 text-white rounded-xl transition-all shadow-sm hover:shadow-md"
+                        >
+                            <Trash2 size={16} className="mr-2" />
+                            Delete Selected ({selectedRowKeys.length})
+                        </Button>
+                    )}
+                </div>
+
                 <div className="space-y-6">
-                    <DynamicTable columns={columns} data={tableData} rowKey={(r) => r.id} rowSelection={{
-                        selectedRowKeys,
-                        onChange: setSelectedRowKeys,
-                    }} />
+                    <DynamicTable
+                        columns={columns}
+                        data={tableData}
+                        rowKey={(r) => r.id}
+                        rowSelection={{
+                            selectedRowKeys,
+                            onChange: setSelectedRowKeys,
+                        }}
+                    />
                 </div>
             </div>
 
