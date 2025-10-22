@@ -9,7 +9,7 @@ import { useSidebar } from "../context/SidebarContext";
 //   HorizontaLDots
 // } from "../icons/index";
 
-import { Boxes, FileBox, FileCode, Handshake, MonitorCog, LayoutDashboard } from "lucide-react";
+import { Boxes, FileBox, FileCode, Handshake, MonitorCog, LayoutDashboard, FileCheck2 } from "lucide-react";
 type NavItem = {
   name: string;
   icon: React.ReactNode;
@@ -48,6 +48,11 @@ const navItems: NavItem[] = [
     name: "Reports",
     subItems: [{ name: "Schedule Reports", path: "/schedule-reports", pro: false },
     { name: "Generate Reports", path: "/generate-reports", pro: false }]
+  },
+  {
+    icon: <FileCheck2 />,
+    name: "Authorize Requests",
+    path: "/authorize-requests",
   },
 ];
 

@@ -377,9 +377,6 @@ export default function NotificationTableClient() {
                 description=""
                 buttonText="Okay"
             />
-
-
-
         </>
     );
 }
